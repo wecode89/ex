@@ -1,31 +1,36 @@
 import unittest
 import sys, os
+import unittest
+from unittest.mock import patch
+from io import StringIO
 from src.calc import MortgageIO, MortgageCalculator
 
 
-class TestBase(unittest.TestCase):
-    def setUp(self):
-        self.path = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.path.replace('/tests', '')
-        sys.path.append(self.path)
+def read_file_into_string_io(filename):
+    path = os.path.abspath(os.path.dirname(__file__))
+    filepath = os.path.join(path, filename)
+    print("filepath:  {}".format(filepath))
 
-    def tearDown(self):
-        del self.calc
+    print(filepath)
 
-    def test_valid(self):
-        pass
+    f = open(filepath)
+    string_io = StringIO(f.read())
+    f.close()
 
-    def test_invalid(self):
-        pass
-
-    def test_null(self):
-        pass
+    print("string io---> {}".format(string_io))
+    return string_io
 
 
 class TestMortgageCalculator(unittest.TestCase):
-
+    @patch("sys.stdin", read_file_into_string_io('data/valid_input.txt'))
     def test_valid(self):
+        # get args from stdin
+        mortgage_io = MortgageIO()
+        args = mortgage_io.get()
 
-        number = MortgageCalculator(1000, 0.05, 30, 0.0).get_monthly_payment()
-        self.assertEqual(number, 105.0)
+        # calculate monthly payment
+        mortgage_calc = MortgageCalculator(**args)
+        monthly_payment = mortgage_calc.get_monthly_payment()
+        print("Monthly payment: ${:.2f}".format(monthly_payment))
+
 

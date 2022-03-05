@@ -3,6 +3,7 @@ import fileinput
 
 class MortgageIO:
     def __init__(self):
+        # empty cons
         pass
 
     def get(self):
@@ -23,14 +24,20 @@ class MortgageIO:
     def get_args(self, lines):
         args = {}
         for line in lines:
+
+            print("line----> {}".format(line))
+
             # split line
             splitted = line.split(':')
             splitted = [x.strip() for x in splitted]
 
             # add to args dict
-            key = splitted[0]
-            value = splitted[1]
-            args[key] = value
+            try:
+                key = splitted[0]
+                value = splitted[1]
+                args[key] = value
+            except IndexError:
+                pass
         return args
 
 
@@ -60,10 +67,9 @@ class MortgageCalculator:
         # term
         try:
             self.term = int(term)
+            if self.term <= 0:
+                raise Exception("Valid term is required")
         except ValueError:
-            raise Exception("Valid term is required")
-
-        if self.term <= 0:
             raise Exception("Valid term is required")
 
     def get_monthly_payment(self):
